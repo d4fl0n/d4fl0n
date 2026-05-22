@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="Blog de cybersécurité et plateforme de writeups CTF par d4fl0n. Analyses techniques, writeups et recherches en sécurité offensive et défensive.">
+    <meta name="author" content="d4fl0n">
+    <meta name="theme-color" content="#0a0c10">
+    <title>d4fl0n | CTF Writeups & Cyber Research</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: radial-gradient(circle at 10% 20%, #0b0e14, #05070a);
+            color: #eef2ff;
+            font-family: 'Inter', sans-serif;
+            line-height: 1.5;
+            scroll-behavior: smooth;
+        }
+
+        /* custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            background: #0f1219;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2a2f3f;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4f46e5;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        /* header / nav */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            padding: 1.2rem 0;
+            border-bottom: 1px solid rgba(79, 70, 229, 0.2);
+            margin-bottom: 3rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #c084fc, #4f46e5);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-decoration: none;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .logo span {
+            color: #facc15;
+            background: none;
+            -webkit-background-clip: unset;
+            background-clip: unset;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #cbd5e6;
+            text-decoration: none;
+            font-weight: 500;
+            transition: 0.2s;
+            font-size: 0.95rem;
+        }
+
+        .nav-links a:hover {
+            color: #a78bfa;
+            border-bottom: 2px solid #4f46e5;
+            padding-bottom: 4px;
+        }
+
+        /* hero section */
+        .hero {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .avatar {
+            background: #1e1f2c;
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            border: 2px solid #4f46e5;
+            box-shadow: 0 0 20px rgba(79, 70, 229, 0.4);
+        }
+
+        .avatar i {
+            font-size: 3.8rem;
+            color: #c084fc;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            background: linear-gradient(to right, #f0f3ff, #b9a9ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .tagline {
+            font-size: 1.2rem;
+            color: #9ca3cf;
+            max-width: 650px;
+            margin: 0.75rem auto 1rem;
+        }
+
+        .badge-container {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 1.5rem 0 0.5rem;
+        }
+
+        .badge {
+            background: rgba(79, 70, 229, 0.15);
+            backdrop-filter: blur(4px);
+            padding: 0.4rem 1rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-family: 'JetBrains Mono', monospace;
+            border: 1px solid rgba(79, 70, 229, 0.4);
+            transition: 0.2s;
+        }
+
+        .badge i {
+            margin-right: 6px;
+            font-size: 0.75rem;
+        }
+
+        /* filter tabs */
+        .filter-bar {
+            display: flex;
+            justify-content: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            margin: 2rem 0 2.5rem;
+        }
+
+        .filter-btn {
+            background: none;
+            border: 1px solid #2d3348;
+            color: #b9c3e6;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            font-weight: 500;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.85rem;
+        }
+
+        .filter-btn i {
+            margin-right: 8px;
+        }
+
+        .filter-btn.active, .filter-btn:hover {
+            background: #4f46e5;
+            border-color: #4f46e5;
+            color: white;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        }
+
+        /* carte grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .article-card {
+            background: rgba(18, 22, 32, 0.7);
+            backdrop-filter: blur(2px);
+            border-radius: 24px;
+            border: 1px solid rgba(79, 70, 229, 0.2);
+            padding: 1.6rem;
+            transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+
+        .article-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(168, 139, 250, 0.5);
+            box-shadow: 0 18px 30px -12px rgba(0, 0, 0, 0.5);
+            background: rgba(26, 30, 44, 0.8);
+        }
+
+        .card-category {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            margin-bottom: 1rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .category-ctf {
+            background: #dc262620;
+            color: #f87171;
+            border-left: 3px solid #ef4444;
+        }
+
+        .category-research {
+            background: #3b82f620;
+            color: #60a5fa;
+            border-left: 3px solid #3b82f6;
+        }
+
+        .card-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin: 0.5rem 0 0.75rem;
+            line-height: 1.3;
+        }
+
+        .card-desc {
+            color: #b1bbdf;
+            font-size: 0.9rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .card-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+            color: #7e86a7;
+            border-top: 1px dashed #2a2f3f;
+            padding-top: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .read-more {
+            color: #a78bfa;
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 0.8rem;
+        }
+
+        /* section recherche et veille */
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin: 2.5rem 0 1rem;
+            letter-spacing: -0.3px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title i {
+            color: #4f46e5;
+            font-size: 1.6rem;
+        }
+
+        hr {
+            border: 0;
+            height: 1px;
+            background: linear-gradient(90deg, #4f46e5, transparent);
+            margin: 0.5rem 0 1.5rem;
+        }
+
+        footer {
+            margin-top: 4rem;
+            padding: 2rem 0;
+            border-top: 1px solid #1b1f2c;
+            text-align: center;
+            font-size: 0.85rem;
+            color: #7c85aa;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .social-links a {
+            color: #8f9bb5;
+            margin-left: 1.2rem;
+            font-size: 1.2rem;
+            transition: 0.2s;
+        }
+
+        .social-links a:hover {
+            color: #c084fc;
+        }
+
+        /* empty state / animation */
+        .empty-message {
+            text-align: center;
+            padding: 3rem;
+            background: #0f111a;
+            border-radius: 2rem;
+            grid-column: 1 / -1;
+        }
+
+        @media (max-width: 700px) {
+            .container {
+                padding: 1rem;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+            .navbar {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <nav class="navbar">
+        <a href="#" class="logo">&lt;d4fl0n<span>_sec</span>/&gt;</a>
+        <ul class="nav-links">
+            <li><a href="#writeups"><i class="fas fa-flag-checkered"></i> Writeups</a></li>
+            <li><a href="#research"><i class="fas fa-shield-haltered"></i> Research</a></li>
+            <li><a href="#about"><i class="fas fa-user-astronaut"></i> About</a></li>
+        </ul>
+    </nav>
+
+    <div class="hero">
+        <div class="avatar">
+            <i class="fas fa-skull-crossbones"></i>
+        </div>
+        <h1>d4fl0n's Armory</h1>
+        <div class="tagline">
+            CTF writeups · offensive research · malware analysis · red teaming
+        </div>
+        <div class="badge-container">
+            <div class="badge"><i class="fas fa-trophy"></i> HTB top 7%</div>
+            <div class="badge"><i class="fab fa-github"></i> d4fl0n</div>
+            <div class="badge"><i class="fas fa-terminal"></i> #Cybersecurity</div>
+        </div>
+    </div>
+
+    <!-- Filtres dynamiques -->
+    <div class="filter-bar" id="filterBar">
+        <button class="filter-btn active" data-filter="all"><i class="fas fa-layer-group"></i> Tous</button>
+        <button class="filter-btn" data-filter="ctf"><i class="fas fa-flag-checkered"></i> CTF Writeups</button>
+        <button class="filter-btn" data-filter="research"><i class="fas fa-microscope"></i> Recherches</button>
+    </div>
+
+    <!-- Grid contenant tous les articles (writeups + recherches) -->
+    <div id="articlesGrid" class="cards-grid"></div>
+
+    <!-- Section "À propos" + veille -->
+    <div id="about" style="scroll-margin-top: 80px;">
+        <div class="section-title">
+            <i class="fas fa-user-secret"></i>
+            <span>À propos de ce hub</span>
+        </div>
+        <hr>
+        <p style="margin-bottom: 1rem; max-width: 800px;">
+            Passionné par la cybersécurité offensive, je publie ici mes <strong>writeups CTF</strong> (Capture The Flag) détaillés 
+            et mes <strong>recherches techniques</strong> autour de l'exploitation binaire, web, reverse engineering et blue teaming. 
+            Chaque article contient des explications pas-à-pas, des scripts d'automatisation et des analyses de vulnérabilités.
+        </p>
+        <p style="margin-bottom: 1.5rem;">
+            <i class="fas fa-calendar-alt"></i> Dernière mise à jour : Mars 2026 · <i class="fas fa-database"></i> 12 publications
+        </p>
+    </div>
+
+    <div id="research" style="scroll-margin-top: 80px;">
+        <div class="section-title">
+            <i class="fas fa-flask"></i>
+            <span>Projets & recherche active</span>
+        </div>
+        <hr>
+        <div style="display: flex; flex-wrap: wrap; gap: 1.2rem; margin-top: 1rem;">
+            <div style="background: #0f121b; border-radius: 1rem; padding: 1rem; flex:1; min-width: 200px;">
+                <i class="fas fa-bug" style="color: #f97316;"></i> <strong>Analyse de CVE récentes</strong><br>
+                <span style="font-size: 0.8rem;">étude CVE-2025-1234, CVE-2025-5678</span>
+            </div>
+            <div style="background: #0f121b; border-radius: 1rem; padding: 1rem; flex:1; min-width: 200px;">
+                <i class="fas fa-chart-line"></i> <strong>Automatisation OSINT</strong><br>
+                <span style="font-size: 0.8rem;">outils python pour reconnaissance passive</span>
+            </div>
+            <div style="background: #0f121b; border-radius: 1rem; padding: 1rem; flex:1; min-width: 200px;">
+                <i class="fas fa-laptop-code"></i> <strong>Reverse Engineering lab</strong><br>
+                <span style="font-size: 0.8rem;">crackmes & analyse de malwares</span>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div>© 2026 d4fl0n · <i class="fas fa-shield-alt"></i> CyberSec Arsenal</div>
+        <div class="social-links">
+            <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
+            <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+            <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+            <a href="#" aria-label="Discord"><i class="fab fa-discord"></i></a>
+        </div>
+    </footer>
+</div>
+
+<script>
+    // --- Données: writeups CTF + recherches cybersécurité ---
+    const articlesData = [
+        // CTF WRITEUPS (category: ctf)
+        {
+            id: 1,
+            title: "HackTheBox - Sauna (Active Directory)",
+            description: "Exploitation de Kerberos, AS-REP roasting, élévation de privilèges via DCSync. Writeup complet avec scripts python.",
+            category: "ctf",
+            date: "Fév 2026",
+            icon: "fa-flag-checkered",
+            ctfName: "HTB",
+            tags: ["AD", "Kerberos", "Windows"],
+            slug: "htb-sauna-writeup"
+        },
+        {
+            id: 2,
+            title: "PicoCTF 2025 - 'Notepad' (Heap exploitation)",
+            description: "Use-after-free sur un gestionnaire de notes, contournement de ASLR avec technique du tcache poisoning.",
+            category: "ctf",
+            date: "Jan 2026",
+            icon: "fa-terminal",
+            ctfName: "PicoCTF",
+            tags: ["pwn", "heap", "glibc"],
+            slug: "picoctf-notepad-writeup"
+        },
+        {
+            id: 3,
+            title: "CTF CyberEdu 2025 - Forensic Memory Dump",
+            description: "Analyse Volatility, extraction de processus malveillant et reverse de shellcode. Récupération du flag.",
+            category: "ctf",
+            date: "Déc 2025",
+            icon: "fa-microchip",
+            ctfName: "CyberEdu",
+            tags: ["forensics", "volatility", "memory"],
+            slug: "cyberedu-forensics-writeup"
+        },
+        {
+            id: 4,
+            title: "RootMe - App-script (XSS to RCE)",
+            description: "Cross-site scripting filtré, bypass WAF et exécution de commande distante via node.js.",
+            category: "ctf",
+            date: "Nov 2025",
+            icon: "fa-code",
+            ctfName: "RootMe",
+            tags: ["XSS", "RCE", "bypass"],
+            slug: "rootme-xss-rce"
+        },
+        // RECHERCHES (category: research)
+        {
+            id: 5,
+            title: "Détection de shellcode polymorphique avec YARA",
+            description: "Méthodologie pour créer des règles YARA robustes face au chiffrement et mutations. Analyse de familles de malwares.",
+            category: "research",
+            date: "Mars 2026",
+            icon: "fa-search",
+            tags: ["yara", "malware", "detection"],
+            slug: "yara-polymorphic-shellcode"
+        },
+        {
+            id: 6,
+            title: "Post-Exploitation Linux : Persistance via systemd",
+            description: "Techniques avancées de persistance sur systèmes Linux modernes, contournement de SELinux et auditd.",
+            category: "research",
+            date: "Fév 2026",
+            icon: "fa-linux",
+            tags: ["linux", "persistence", "redteam"],
+            slug: "linux-systemd-persistence"
+        },
+        {
+            id: 7,
+            title: "Attaque de type account takeover via OAuth misconfiguration",
+            description: "Analyse de failles OAuth 2.0 sur des applications modernes, démonstration d'un vol de token et prise de compte admin.",
+            category: "research",
+            date: "Jan 2026",
+            icon: "fa-id-card",
+            tags: ["oauth", "web", "ATO"],
+            slug: "oauth-account-takeover"
+        },
+        {
+            id: 8,
+            title: "Reverse Engineering d'un loader .NET (obfuscation ConfuserEx)",
+            description: "Déobfuscation d'un malware .NET, extraction de la payload finale et analyse des hooks API.",
+            category: "research",
+            date: "Déc 2025",
+            icon: "fa-cogs",
+            tags: ["dotnet", "reverse", "malware"],
+            slug: "dotnet-loader-reversing"
+        },
+        {
+            id: 9,
+            title: "Windows Kernel Exploitation: driver vulnerable (HEVD)",
+            description: "Exploitation d'une vulnérabilité de type stack overflow dans un driver, élévation de privilège SMEP bypass.",
+            category: "research",
+            date: "Nov 2025",
+            icon: "fa-window-maximize",
+            tags: ["kernel", "windows", "exploit"],
+            slug: "hevd-kernel-exploit"
+        },
+        {
+            id: 10,
+            title: "MITRE ATT&CK mapping pour red teaming automatisé",
+            description: "Automatisation de campagnes avec Caldera, mapping TTPs et création de rapports dynamiques.",
+            category: "research",
+            date: "Oct 2025",
+            icon: "fa-chart-simple",
+            tags: ["mitre", "caldera", "automation"],
+            slug: "mitre-attack-automation"
+        },
+        {
+            id: 11,
+            title: "HTB University CTF 2025 - Writeup complet (Top 5%)",
+            description: "Walkthrough de 4 challenges: crypto, web, pwn et reverse. Stratégies et outils utilisés.",
+            category: "ctf",
+            date: "Sept 2025",
+            icon: "fa-university",
+            ctfName: "HTB Uni",
+            tags: ["misc", "crypto", "pwn"],
+            slug: "htb-uni-ctf-writeup"
+        },
+        {
+            id: 12,
+            title: "Analyse de campagne APT : détection de C2 sur réseau",
+            description: "Étude de trafic réseau, extraction d'indicateurs de compromission (IOC) et hunting avec Zeek.",
+            category: "research",
+            date: "Août 2025",
+            icon: "fa-network-wired",
+            tags: ["APT", "zeek", "network"],
+            slug: "apt-c2-detection"
+        }
+    ];
+
+    const articlesGrid = document.getElementById('articlesGrid');
+    let currentFilter = 'all';
+
+    // Fonction pour générer l'affichage des cartes selon catégorie
+    function renderCards(filter) {
+        let filteredArticles = [];
+        if (filter === 'all') {
+            filteredArticles = [...articlesData];
+        } else {
+            filteredArticles = articlesData.filter(article => article.category === filter);
+        }
+
+        if (filteredArticles.length === 0) {
+            articlesGrid.innerHTML = `<div class="empty-message"><i class="fas fa-skull" style="font-size: 2rem; opacity: 0.5;"></i><p>Aucun article pour cette catégorie ... bientôt plus de contenu !</p></div>`;
+            return;
+        }
+
+        const cardsHTML = filteredArticles.map(article => {
+            const categoryLabel = article.category === 'ctf' ? 'CTF WRITEUP' : '🔬 RECHERCHE';
+            const categoryClass = article.category === 'ctf' ? 'category-ctf' : 'category-research';
+            let extraBadge = '';
+            if (article.category === 'ctf' && article.ctfName) {
+                extraBadge = `<span style="margin-left: 0.5rem; background:#171b2a; padding:2px 8px; border-radius: 20px; font-size:0.65rem;"><i class="fas fa-trophy"></i> ${article.ctfName}</span>`;
+            } else if (article.category === 'research' && article.tags) {
+                extraBadge = `<span style="margin-left: 0.5rem; background:#171b2a; padding:2px 8px; border-radius: 20px; font-size:0.65rem;"><i class="fas fa-tag"></i> ${article.tags[0]}</span>`;
+            }
+            
+            return `
+                <div class="article-card" data-category="${article.category}" data-slug="${article.slug}">
+                    <div class="card-category ${categoryClass}">
+                        <i class="fas ${article.icon || (article.category === 'ctf' ? 'fa-flag' : 'fa-flask')}"></i> ${categoryLabel}
+                        ${extraBadge}
+                    </div>
+                    <div class="card-title">${escapeHtml(article.title)}</div>
+                    <div class="card-desc">${escapeHtml(article.description)}</div>
+                    <div class="card-meta">
+                        <span><i class="far fa-calendar-alt"></i> ${article.date}</span>
+                        <span class="read-more">Lire l'article <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        articlesGrid.innerHTML = cardsHTML;
+        
+        // Ajouter event listener sur chaque carte pour simuler redirection (les liens seront actifs quand les .html existeront)
+        document.querySelectorAll('.article-card').forEach(card => {
+            card.addEventListener('click', (e) => {
+                const slug = card.getAttribute('data-slug');
+                if (slug) {
+                    // Dans un vrai site, chaque writeup/research serait un fichier .html du genre /writeups/htb-sauna-writeup.html
+                    // Pour l'instant simulation et ouverture dans un nouvel onglet (placeholder)
+                    // En environnement GitHub Pages, on pourra générer des dossiers. On simule une alerte pour démo mais on redirige vers une page d'article générique.
+                    window.open(`/writeups/${slug}.html`, '_blank');
+                    // fallback pour l'exemple:  si les pages n'existent pas, on peut prévenir, mais on garde l'idée fonctionnelle.
+                    if (!window.location.href.includes('localhost') && !window.location.href.includes('github.io')) {
+                        // simple console info
+                        console.log(`redirection vers /writeups/${slug}.html`);
+                    }
+                }
+            });
+        });
+    }
+
+    // petite sécurité anti XSS
+    function escapeHtml(str) {
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+            return c;
+        });
+    }
+
+    // Gestion des filtres et événements
+    function initFilters() {
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const filterValue = btn.getAttribute('data-filter');
+                currentFilter = filterValue;
+                // update active class
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                renderCards(currentFilter);
+            });
+        });
+    }
+
+    // smooth anchor links
+    document.querySelectorAll('.nav-links a').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            const href = this.getAttribute('href');
+            if (href && href !== '#') {
+                const targetEl = document.querySelector(href);
+                if (targetEl) {
+                    e.preventDefault();
+                    targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }
+        });
+    });
+
+    // initial render
+    renderCards('all');
+    initFilters();
+
+    // "read-more" hover simulation déjà intégré, mais rajout d'un petit console friendly pour info que les liens sont demo
+    console.log("d4fl0n.github.io - hub prêt pour les writeups CTF et recherches");
+</script>
+</body>
+</html>
